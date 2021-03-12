@@ -19,7 +19,11 @@ function loader(param, block) {
   }
 
   if(param == 'off') {
-    return block.children[0].remove();
+    console.log(block)
+    for(let i = 0; i < block.children.length; i++) {
+      console.log(block.children[i])
+      block.children[i].remove();
+    }
   }
 }
 
