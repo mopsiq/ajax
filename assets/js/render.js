@@ -1,49 +1,3 @@
-const mainBlock = document.querySelector('.main');
-const mainSelect = document.querySelector('.main__select');
-const testBlock = document.querySelector('.main__wrapper');
-
-mainSelect.addEventListener('change', (e) => {
-  let currentSelect = e.target.value;
-  if(mainBlock.firstElementChild != null) {
-    mainBlock.firstElementChild.remove();
-  } 
-  initBlock(currentSelect);
-});
-
-function initBlock(target) {
-
-  switch(target) {
-    case 'Weather': {
-      getJSONInUrl('http://api.weatherstack.com/current?access_key=e3f03e2a4da59c7fcaf3e9a620f72281&query=', 'Zaporizhzhya')
-      .then(responceInObject => formingWeatherForecast(responceInObject, mainBlock) );
-      break;
-    }
-    case 'Covid': {
-      getJSONInUrl('https://api.covid19api.com/summary', 'a')
-        .then(responceInObject => formingCovid(responceInObject, mainBlock));
-      break;
-    }
-
-  }
-}
-
-async function getJSONInUrl(url, query) {
-  return new Promise(async (resolve, reject) => {
-    loader('on');
-
-    let responce = await fetch(`${url}${query}`)
-    if(responce.status != 200) {
-      loader('off', mainBlock);
-      errorWindow();
-      reject(new Error(`Error in ${error.message}`));
-    }
-    console.log(responce)
-    let dataInJson = await responce.json();
-
-    loader('off', mainBlock)
-    return resolve(dataInJson)
-  })
-}
 
 function formingWeatherForecast(object, block) {
   console.log(object)
@@ -103,27 +57,4 @@ function renderInMainBlock(readyMateData, block) {
   block.append(readyMateData);
 }
 
-function errorWindow() {
-  let div = document.createElement('div');
-  div.textContent = 'Oops... An error occured during the request. Please, come back later.'
-  mainBlock.append(div);
-}
-
-function loader(param, block) {
-  if(param == 'on') {
-    let loaderGif = document.createElement('div');
-    loaderGif.innerHTML = `
-    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="margin: auto; background: none; display: block; shape-rendering: auto;" width="137px" height="137px" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
-  <g>
-    <path d="M50 27A23 23 0 1 0 73 50.00000000000001" fill="none" stroke="#35c0db" stroke-width="7"></path>
-    <path d="M49 17L49 37L59 27L49 17" fill="#35c0db"></path>
-    <animateTransform attributeName="transform" type="rotate" repeatCount="indefinite" dur="1.7543859649122806s" values="0 50 50;360 50 50" keyTimes="0;1"></animateTransform>
-  </g>
-    `;
-    return mainBlock.append(loaderGif)
-  }
-
-  if(param == 'off') {
-    return block.children[0].remove();
-  }
-}
+export {formingWeatherForecast, formingCovid, renderInMainBlock};
